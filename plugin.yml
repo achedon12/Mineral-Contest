@@ -1,0 +1,5 @@
+name: MineralContest
+version: 1.0
+main: achedon12\MineralContest\MC
+api: [4.0.0]
+author: achedon12
