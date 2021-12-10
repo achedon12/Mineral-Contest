@@ -1,10 +1,38 @@
+#to add a item "id:meta:enchantement:level"
+
+
 metier:
   mineur:
+    items:
+      - "278:0:efficiency:1"
+    life: 16
   guerrier:
+    - "267:0:sharpness:2"
   lutin:
+    - "347:0:none:none"
 
 Minerais:
   fer: 10
   or: 50
   diamand: 150
   emeraude: 300
+
+World: "world"
+
+Equipe:
+  a:
+    x: 0
+    y: 0
+    z: 0
+  b:
+    x: 0
+    y: 0
+    z: 0
+  c:
+    x: 0
+    y: 0
+    z: 0
+  d:
+    x: 0
+    y: 0
+    z: 0

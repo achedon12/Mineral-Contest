@@ -11,7 +11,7 @@ use pocketmine\Server;
 
 class StartCMD extends Command{
 
-    public const prefix = "§0[§6Mineral§bContest§0]§r";
+    private const prefix = "§0[§6Mineral§bContest§0]§r";
 
     public function __construct(string $name, Translatable|string $description = "", Translatable|string|null $usageMessage = null, array $aliases = []){
         parent::__construct($name, $description, $usageMessage, $aliases);
@@ -21,48 +21,49 @@ class StartCMD extends Command{
         if(!$sender instanceof Player){
             $sender->sendMessage("Command to execute in game");
         }else{
-            if(!$sender->hasPermission("mc.start") || !Server::getInstance()->isOp($sender->getName())){
-                $sender->sendMessage("§eYou don't have this permission to execute this command");
+            if(!$sender->hasPermission("mc.op") && !Server::getInstance()->isOp($sender->getName())){
+                $sender->sendMessage(self::prefix." §eYou don't have this permission to execute this command");
             }else{
-                MC::$start = 1;
-                Server::getInstance()->broadcastMessage(self::prefix . " Game launching");
-                Server::getInstance()->broadcastMessage(self::prefix . " Assiging your team members\nYou will be teleported when the teams have been chosen");
-                $players = Server::getInstance()->getOnlinePlayers();
-                $count = count($players);
-                $a = 0;
-                $b = 0;
-                $c = 0;
-                $d = 0;
+               if(MC::$start == 1){
+                   $sender->sendMessage(self::prefix." A game is already launching");
+               }else{
+                   MC::$start = 1;
+                   var_dump(MC::$start);
+                   Server::getInstance()->broadcastMessage(self::prefix . " Game launching");
+                   Server::getInstance()->broadcastMessage(self::prefix . " Assiging your team members\nYou will be teleported when the teams have been chosen");
+                   $players = Server::getInstance()->getOnlinePlayers();
+                   $count = count($players);
 
-                foreach ($players as $index => $player){
-                    switch (rand(1,4)){
-                        case 1: break;
-                        case 2: break;
-                        case 3: break;
-                        case 4: break;
+                   $a = 0;
+                   $b = 0;
+                   $c = 0;
+                   $d = 0;
 
-                    }
-                }
-
-
-                for($i = $count/4;$i<4;$i++){
-                    MC::$EQUIPE_A[] = $players[rand(0,$count-1)];
-                    MC::$EQUIPE_B[] =
-                    MC::$EQUIPE_C[] =
-                    MC::$EQUIPE_D[] =
-                }
-                var_dump(MC::$EQUIPE_A);
-                var_dump(MC::$EQUIPE_B);
-                var_dump(MC::$EQUIPE_C);
-                var_dump(MC::$EQUIPE_D);
-
-
-
-
-
+                   foreach ($players as $player){
+                       $rand = rand(1,4);
+                       if($rand === 1 && $a < $count/4){
+                           $a++;
+                           MC::$EQUIPE_A[] = $player;
+                           MC::$ALL_EQUIPE[$player->getName()] = "a";
+                       }
+                       if($rand === 2 && $b < $count/4){
+                           $a++;
+                           MC::$EQUIPE_B[] = $player;
+                           MC::$ALL_EQUIPE[$player->getName()] = "b";
+                       }
+                       if($rand === 3 && $c < $count/4){
+                           $a++;
+                           MC::$EQUIPE_C[] = $player;
+                           MC::$ALL_EQUIPE[$player->getName()] = "c";
+                       }
+                       if($rand === 4 && $d < $count/4){
+                           $a++;
+                           MC::$EQUIPE_D[] = $player;
+                           MC::$ALL_EQUIPE[$player->getName()] = "d";
+                       }
+                   }
+               }
             }
         }
-
-
     }
 }
