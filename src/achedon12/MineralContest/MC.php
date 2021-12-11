@@ -36,6 +36,10 @@ class MC extends PluginBase implements Listener{
     public static array $ALL_EQUIPE = [];
     /** @var array $CLASS */
     public static array $CLASS = [];
+    /** @var array $COOLDOWN */
+    public static array $COOLDOWN = [];
+
+
 
     protected function onEnable(): void{
 
@@ -47,9 +51,9 @@ class MC extends PluginBase implements Listener{
 
         $this->getServer()->getCommandMap()->registerAll('MineralContest',[
             new StartCMD("start","start a game","/start"),
-            new Metier("metier","choose/claim a class","/metier"),
+            new Metier("class","choose/claim a class","/class"),
             new Scenario("scenario","plugin's informations","/scenario"),
-            new Annonce("annouce","broadcast a message", "/annonce")
+            new Annonce("annonce","broadcast a message", "/annonce")
         ]);
 
         $this->getServer()->getPluginManager()->registerEvents(new PlayerEvents(), $this);
@@ -75,6 +79,11 @@ class MC extends PluginBase implements Listener{
     public static function getEquipe(Player $player) : string{
         $equipe = self::$ALL_EQUIPE[$player->getName()];
         return $equipe;
+    }
+
+    public static function getMetier(Player $player) : string{
+        $class = self::$CLASS[$player->getName()];
+        return $class;
     }
 
 }

@@ -24,9 +24,28 @@ class Metier extends Command{
                 $sender->sendMessage(self::prefix." You can't run this command while the game is not start");
             }elseif (MC::$start == 1){
                 if(count($args) == 0){
-                    //TODO: faire ça
+                    $sender->sendMessage(self::prefix." You can choose your class between <lutin | guerrier | mineur>\nExecute the command §c/class choose <lutin | guerrier | mineur>§r");
                 }else{
+                    if($args[0] != "choose" && $args[1] != ["lutin","guerrier","mineur"]){
+                        $sender->sendMessage(self::prefix." Execute the command §c/class choose <lutin | guerrier | mineur>§r");
+                    }else{
+                        switch($args[1]){
+                            case "lutin":
+                                MC::$CLASS[$sender->getName()] = "lutin";
+                                $sender->sendMessage(self::prefix." You have choose the class lutin for your party");
+                                return;
+                            case "guerrier":
+                                MC::$CLASS[$sender->getName()] = "guerrier";
+                                $sender->sendMessage(self::prefix." You have choose the class guerrier for your party");
 
+                                return;
+                            case "mineur":
+                                MC::$CLASS[$sender->getName()] = "mineur";
+                                $sender->sendMessage(self::prefix." You have choose the class mineur for your party");
+
+                                return;
+                        }
+                    }
                 }
             }
         }

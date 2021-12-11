@@ -28,7 +28,6 @@ class StartCMD extends Command{
                    $sender->sendMessage(self::prefix." A game is already launching");
                }else{
                    MC::$start = 1;
-                   var_dump(MC::$start);
                    Server::getInstance()->broadcastMessage(self::prefix . " Game launching");
                    Server::getInstance()->broadcastMessage(self::prefix . " Assiging your team members\nYou will be teleported when the teams have been chosen");
                    $players = Server::getInstance()->getOnlinePlayers();
@@ -62,6 +61,8 @@ class StartCMD extends Command{
                            MC::$ALL_EQUIPE[$player->getName()] = "d";
                        }
                    }
+                   Server::getInstance()->broadcastMessage(self::prefix." Goog game");
+                   Server::getInstance()->broadcastMessage(self::prefix." You can now choose your class with the command /class\nLutin: 20 ❤ | compass (make yourself invisible for 10s)\nGuerrier: 25 ❤ | iron sword sharpness 1\nMineur: 8 ❤ | diamond pickaxe efficiency 1");
                }
             }
         }

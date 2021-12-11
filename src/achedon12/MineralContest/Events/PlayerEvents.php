@@ -3,11 +3,20 @@
 namespace achedon12\MineralContest\Events;
 
 use achedon12\MineralContest\MC;
+use achedon12\MineralContest\Task\Lutintask;
+use pocketmine\data\bedrock\EnchantmentIds;
 use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerChatEvent;
-use pocketmine\event\player\PlayerDeathEvent;
-use pocketmine\event\player\PlayerRespawnEvent;
+use pocketmine\event\player\PlayerDropItemEvent;
+use pocketmine\event\player\PlayerInteractEvent;
+use pocketmine\item\enchantment\Enchantment;
+use pocketmine\item\enchantment\EnchantmentInstance;
+use pocketmine\item\enchantment\StringToEnchantmentParser;
+use pocketmine\item\enchantment\VanillaEnchantments;
+use pocketmine\item\Item;
+use pocketmine\item\ItemFactory;
+use pocketmine\network\mcpe\protocol\types\Enchant;
 use pocketmine\player\Player;
 use pocketmine\Server;
 use pocketmine\world\Position;
@@ -18,11 +27,10 @@ class PlayerEvents implements Listener{
     private const Team_prefix = "§b[§cTeam§b]§r";
 
     public function onEntityDamageEvent(EntityDamageEvent $event){
-
-        if($event->getEntity() instanceof Player){
+        $player = $event->getEntity();
+        if($player instanceof Player){
             $cfg = MC::getConfigs();
 
-            $player = $event->getEntity();
             $event->cancel();
             $player->setHealth(20);
             if(MC::$start == 1){
@@ -30,6 +38,38 @@ class PlayerEvents implements Listener{
                 $x = $cfg->getNested("Equipe.$equipe.x");
                 $y = $cfg->getNested("Equipe.$equipe.y");
                 $z = $cfg->getNested("Equipe.$equipe.z");
+
+                foreach ($player->getInventory()->getContents() as $index => $items){
+                    if($items->getCustomName() == "ClassTools"){
+                        $player->getInventory()->setItem($index,ItemFactory::air());
+                        continue;
+                    }
+                    $player->getWorld()->dropItem($player->getPosition(),$items,null);
+                    $player->getInventory()->setItem($index,ItemFactory::air());
+                }
+
+
+
+                $class = MC::getMetier($player);
+                $life = $cfg->getNested("Class.$class.life");
+                $item = $cfg->getNested("Class.$class.items");
+                $Item = explode(":",$item);
+                $ItemID = $Item[0];
+                $ItemMETA = $Item[1];
+
+                $newItem = ItemFactory::getInstance()->get($ItemID,$ItemMETA,1);
+
+                if(MC::getMetier($player) == "guerrier"){
+                    $newItem->addEnchantment(new EnchantmentInstance(VanillaEnchantments::SHARPNESS(),1));
+                }elseif(MC::getMetier($player) == "mineur"){
+                    $newItem->addEnchantment(new EnchantmentInstance(VanillaEnchantments::EFFICIENCY(),1));
+                }
+
+                $newItem->setCustomName("ClassTools");
+                $player->getInventory()->addItem($newItem);
+                $player->setMaxHealth($life);
+
+
                 $world = Server::getInstance()->getWorldManager()->getWorldByName($cfg->get("World"));
                 $player->teleport(new Position($x,$y,$z,$world));
                 Server::getInstance()->broadcastMessage(self::prefix." ".$player->getName()." is dead");
@@ -37,6 +77,15 @@ class PlayerEvents implements Listener{
                 $player->teleport(Server::getInstance()->getWorldManager()->getWorldByName("world")->getSafeSpawn());
                 Server::getInstance()->broadcastMessage(self::prefix." ".$player->getName()." is dead");
             }
+        }
+    }
+
+    public function onDrop(PlayerDropItemEvent $event){
+
+        $item = $event->getItem();
+        $player = $event->getPlayer();
+        if($item->getCustomName() == "ClassTools"){
+            $event->cancel();
         }
     }
 
@@ -81,6 +130,26 @@ class PlayerEvents implements Listener{
             }
         }else{
             Server::getInstance()->broadcastMessage($event->getPlayer()->getName(). " §6»§r ". $msg);
+        }
+    }
+
+    public function onInteract(PlayerInteractEvent $event){
+        $item = $event->getItem();
+        $player = $event->getPlayer();
+        $cooldown = 120;
+
+        if($item->getId() == 347 && $item->getMeta() == 0){
+            if(!isset(MC::$COOLDOWN[$player->getName()])){
+                MC::$COOLDOWN[$player->getName()] = time() + $cooldown;
+                MC::getInstance()->getScheduler()->scheduleRepeatingTask(new Lutintask($player),10);
+            }else{
+                if(MC::$COOLDOWN[$player->getName()] > time()){
+                    $remaining = MC::$COOLDOWN[$player->getName()] - time();
+                    $player->sendMessage(self::prefix." You have to wait §d$remaining s §rbefore to use this command again");
+                }else{
+                    unset(MC::$COOLDOWN[$player->getName()]);
+                }
+            }
         }
     }
 }

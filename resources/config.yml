@@ -1,16 +1,13 @@
-#to add a item "id:meta:enchantement:level"
-
-
-metier:
+Class:
   mineur:
-    items:
-      - "278:0:efficiency:1"
+    items: "257:0"
     life: 16
   guerrier:
-    - "267:0:sharpness:2"
+    items: "267:0"
+    life: 30
   lutin:
-    - "347:0:none:none"
-
+    items: "347:0"
+    life: 20
 Minerais:
   fer: 10
   or: 50
@@ -21,18 +18,18 @@ World: "world"
 
 Equipe:
   a:
-    x: 0
-    y: 0
-    z: 0
+    x: 250
+    y: 250
+    z: 250
   b:
-    x: 0
-    y: 0
-    z: 0
+    x: 250
+    y: 250
+    z: 250
   c:
-    x: 0
-    y: 0
-    z: 0
+    x: 250
+    y: 250
+    z: 250
   d:
-    x: 0
-    y: 0
-    z: 0
+    x: 250
+    y: 250
+    z: 250
