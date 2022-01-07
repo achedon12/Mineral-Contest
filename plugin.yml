@@ -3,3 +3,6 @@ version: 1.0
 main: achedon12\MineralContest\MC
 api: [4.0.0]
 author: achedon12
+
+# 10.10.152.73 => co de chez moi
+# 192.168.181.218 => ma co

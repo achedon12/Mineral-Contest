@@ -4,7 +4,9 @@ namespace achedon12\MineralContest\Events;
 
 use achedon12\MineralContest\MC;
 use achedon12\MineralContest\Task\Lutintask;
+use pocketmine\block\BlockFactory;
 use pocketmine\data\bedrock\EnchantmentIds;
+use pocketmine\event\block\BlockBreakEvent;
 use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerChatEvent;
@@ -150,6 +152,43 @@ class PlayerEvents implements Listener{
                     unset(MC::$COOLDOWN[$player->getName()]);
                 }
             }
+        }
+    }
+
+    public function onBreak(BlockBreakEvent $event){
+        $block = $event->getBlock();
+        $player = $event->getPlayer();
+        $class = ["mineur","lutin","guerrier"];
+
+        $cfg = MC::getConfigs();
+        if (MC::$start == 1) {
+
+            if (!empty(MC::$CLASS[$player->getName()])){
+
+                switch ($block->getId()) {
+                    case 15: //fer
+                        $event->setDrops([ItemFactory::getInstance()->get(265, 0, 1)]); // lingot de fer
+                        break;
+                    case 14: //or
+                        $event->setDrops([ItemFactory::getInstance()->get(266, 0, 1)]); // lingot d'or
+                        break;
+                    case 56: //diamand
+                        $event->setDrops([ItemFactory::getInstance()->get(264, 0, 1)]); // diamond
+                        break;
+                    case 129: //emeraude
+                        $event->setDrops([ItemFactory::getInstance()->get(388, 0, 1)]); // emeraude
+                        break;
+                }
+            }
+        }
+
+        $x = [$cfg->getNested("Equipe.a.base.x"),$cfg->getNested("Equipe.b.base.x"),$cfg->getNested("Equipe.c.base.x"),$cfg->getNested("Equipe.d.base.x")];
+        $y = [$cfg->getNested("Equipe.a.base.y"),$cfg->getNested("Equipe.b.base.y"),$cfg->getNested("Equipe.c.base.y"),$cfg->getNested("Equipe.d.base.y")];
+        $z = [$cfg->getNested("Equipe.a.base.z"),$cfg->getNested("Equipe.b.base.z"),$cfg->getNested("Equipe.c.base.z"),$cfg->getNested("Equipe.d.base.z")];
+
+        if(!Server::getInstance()->isOp($player->getName()) && $player->getPosition()->getX() == $x && $player->getPosition()->getY() == $y && $player->getPosition()->getZ() == $z){
+            $event->cancel();
+            $player->sendMessage(self::prefix." You can not break block in this area");
         }
     }
 }

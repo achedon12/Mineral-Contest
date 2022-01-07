@@ -3,7 +3,9 @@
 namespace achedon12\MineralContest;
 
 use achedon12\MineralContest\Commands\Annonce;
+use achedon12\MineralContest\Commands\AreneCMD;
 use achedon12\MineralContest\Commands\Metier;
+use achedon12\MineralContest\Commands\RestartCMD;
 use achedon12\MineralContest\Commands\Scenario;
 use achedon12\MineralContest\Commands\StartCMD;
 use achedon12\MineralContest\Events\PlayerEvents;
@@ -38,6 +40,8 @@ class MC extends PluginBase implements Listener{
     public static array $CLASS = [];
     /** @var array $COOLDOWN */
     public static array $COOLDOWN = [];
+    /** @var int|bool $ARENE */
+    public static int|bool $ARENE = false;
 
 
 
@@ -53,7 +57,9 @@ class MC extends PluginBase implements Listener{
             new StartCMD("start","start a game","/start"),
             new Metier("class","choose/claim a class","/class"),
             new Scenario("scenario","plugin's informations","/scenario"),
-            new Annonce("annonce","broadcast a message", "/annonce")
+            new Annonce("annonce","broadcast a message", "/annonce"),
+            new RestartCMD("restart","restart scenario","/restart"),
+            new AreneCMD("arene","teleport team's members on the arena","/arene")
         ]);
 
         $this->getServer()->getPluginManager()->registerEvents(new PlayerEvents(), $this);
@@ -86,4 +92,14 @@ class MC extends PluginBase implements Listener{
         return $class;
     }
 
+    public static function restartScenario(Player $player) : void{
+        unset(self::$CLASS[$player->getName()]);
+        unset(self::$EQUIPE_A[$player->getName()]);
+        unset(self::$EQUIPE_B[$player->getName()]);
+        unset(self::$EQUIPE_C[$player->getName()]);
+        unset(self::$EQUIPE_D[$player->getName()]);
+        self::$start = 0;
+        unset(self::$COOLDOWN[$player->getName()]);
+        unset(self::$ALL_EQUIPE[$player->getName()]);
+        }
 }

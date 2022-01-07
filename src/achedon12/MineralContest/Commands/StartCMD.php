@@ -3,11 +3,18 @@
 namespace achedon12\MineralContest\Commands;
 
 use achedon12\MineralContest\MC;
+use pocketmine\block\Block;
+use pocketmine\block\BlockFactory;
+use pocketmine\block\BlockIdentifier;
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
+use pocketmine\entity\Entity;
+use pocketmine\entity\EntityFactory;
+use pocketmine\entity\Location;
 use pocketmine\lang\Translatable;
 use pocketmine\player\Player;
 use pocketmine\Server;
+use pocketmine\world\Position;
 
 class StartCMD extends Command{
 
@@ -27,6 +34,8 @@ class StartCMD extends Command{
                if(MC::$start == 1){
                    $sender->sendMessage(self::prefix." A game is already launching");
                }else{
+                   $cfg = MC::getConfigs();
+
                    MC::$start = 1;
                    Server::getInstance()->broadcastMessage(self::prefix . " Game launching");
                    Server::getInstance()->broadcastMessage(self::prefix . " Assiging your team members\nYou will be teleported when the teams have been chosen");
@@ -61,6 +70,13 @@ class StartCMD extends Command{
                            MC::$ALL_EQUIPE[$player->getName()] = "d";
                        }
                    }
+                   //$x = $cfg->getNested("Coffre.x");
+                   //$y = $cfg->getNested("Coffre.y");
+                   //$z = $cfg->getNested("Coffre.z");
+                   //$world = Server::getInstance()->getWorldManager()->getWorldByName($cfg->get("World"));
+                   //$player->getWorld()->setBlock(new Position($x,$y,$z,$world),""); //TODO: mettre le block
+                   
+
                    Server::getInstance()->broadcastMessage(self::prefix." Goog game");
                    Server::getInstance()->broadcastMessage(self::prefix." You can now choose your class with the command /class\nLutin: 20 ❤ | compass (make yourself invisible for 10s)\nGuerrier: 25 ❤ | iron sword sharpness 1\nMineur: 8 ❤ | diamond pickaxe efficiency 1");
                }
